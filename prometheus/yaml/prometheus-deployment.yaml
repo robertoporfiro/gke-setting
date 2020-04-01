@@ -1,7 +1,11 @@
-apiVersion: extensions/v1beta1
+# Copyright (c) 2016 Kazumasa Kohtaka. All rights reserved.
+# This file is available under the MIT license.
+
+apiVersion: app/v1
 kind: Deployment
 metadata:
   name: prometheus
+  namespace: monitoring
 spec:
   replicas: 1
   selector:
@@ -14,13 +18,12 @@ spec:
         app: prometheus
     spec:
       serviceAccountName: prometheus
-      containers:
+    containers:
       - name: prometheus
-        image: prom/prometheus:v2.1.0
+        image: prom/prometheus:v2.2.1
         args:
-        - --config.file=/mnt/etc/prometheus.yml
+        - '--config.file=/mnt/etc/prometheus.yml'
         - --storage.tsdb.retention=24h
-        - --web.external-url=$(EXTERNAL_URL)
         ports:
         - containerPort: 9090
         env:
@@ -34,9 +37,14 @@ spec:
           mountPath: /mnt/etc/
         - name: data-volume
           mountPath: /mnt/data/
+        - name: secrets-volume
+          mountPath: /var/run/secrets
       volumes:
       - name: config-volume
         configMap:
           name: prometheus-config
       - name: data-volume
         emptyDir: {}
+      - name: secrets-volume
+        hostPath:
+          path: /var/run/secrets
