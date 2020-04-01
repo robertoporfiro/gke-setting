@@ -23,7 +23,7 @@ spec:
         image: prom/prometheus:v2.2.1
         args:
         - '--config.file=/mnt/etc/prometheus.yml'
-        - --storage.tsdb.retention=24h
+        - '--storage.tsdb.retention=24h'
         ports:
         - containerPort: 9090
         env:
