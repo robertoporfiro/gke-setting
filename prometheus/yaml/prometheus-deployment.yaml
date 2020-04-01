@@ -37,8 +37,6 @@ spec:
           mountPath: /mnt/etc/
         - name: data-volume
           mountPath: /mnt/data/
-        - name: secrets-volume
-          mountPath: /var/run/secrets
       volumes:
       - name: config-volume
         configMap:
