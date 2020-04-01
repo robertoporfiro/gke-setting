@@ -1,7 +1,4 @@
-# Copyright (c) 2016 Kazumasa Kohtaka. All rights reserved.
-# This file is available under the MIT license.
-
-apiVersion: app/v1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: prometheus
@@ -22,23 +19,25 @@ spec:
       - name: prometheus
         image: prom/prometheus:v2.2.1
         args:
-        - '--config.file=/mnt/etc/prometheus.yml'
-        - '--storage.tsdb.retention=24h'
+        - --config.file=/mnt/etc/prometheus.yml
+        - --storage.tsdb.retention=24h
         - --web.external-url=$(EXTERNAL_URL)/prometheus
         ports:
         - containerPort: 9090
         env:
-        mountPath: /mnt/etc/
+        - name: EXTERNAL_URL
+          valueFrom:
+            configMapKeyRef:
+              name: external-url
+              key: url
+        volumeMounts:
+        - name: config-volume
+          mountPath: /mnt/etc/
         - name: data-volume
           mountPath: /mnt/data/
-        - name: rules-volume
-          mountPath: /etc/prometheus-rules
       volumes:
       - name: config-volume
         configMap:
           name: prometheus-config
       - name: data-volume
         emptyDir: {}
-      - name: rules-volume
-        configMap:
-          name: prometheus-rules
