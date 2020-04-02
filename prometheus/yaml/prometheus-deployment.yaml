@@ -13,7 +13,7 @@ spec:
       name: prometheus
       labels:
         app: prometheus
-    spec:
+      spec:
       serviceAccountName: prometheus
     containers:
       - name: prometheus
